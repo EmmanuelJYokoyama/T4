@@ -1,0 +1,12 @@
+// Cores principais
+$primary-color: #e1bee7  ;   // Rosa vibrante (Substitui o Azul escuro)
+$secondary-color: #AD1457; // Rosa escuro (Substitui o Cinza azulado)
+$accent-color: #686868;    // Laranja vibrante (Mantido)
+$background-color: #fdfcfa3a; // Rosa pastel (Substitui o Cinza claro)
+$text-color: #FFFFFF;    
+
+// Configuração geral
+body {
+    background-color: $background-color;
+    color: $primary-color;
+}

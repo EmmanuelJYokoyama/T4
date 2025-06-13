@@ -1,0 +1,52 @@
+@import "./colors.scss";
+// Variáveis globais
+$primary-color: #007bff;
+$success-color: #28a745;
+$background-color: #f4f4f4;
+$text-color: #333;
+$border-radius: 5px;
+
+
+// Formulário
+form {
+    display: flex;
+    flex-direction: column;
+
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        color: #333;
+    }
+
+    input {
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: $border-radius;
+        width: 100%;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 16px;
+        transition: 0.3s;
+
+        &.submit {
+            background-color: $success-color;
+            color: white;
+        }
+
+        &.clear {
+            background-color: $primary-color;
+            color: white;
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}

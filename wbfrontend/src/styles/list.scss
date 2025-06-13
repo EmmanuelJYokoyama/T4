@@ -1,0 +1,9 @@
+@import "./colors.scss";
+
+.list-group-item {
+    background: $background-color;
+    border-left: 5px solid $accent-color;
+    &:hover {
+        background: lighten($background-color, 5%);
+    }
+}

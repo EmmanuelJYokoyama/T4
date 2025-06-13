@@ -1,0 +1,15 @@
+@import "./colors.scss";
+
+.navbar {
+    margin:auto;
+    background-color: $primary-color;
+    .navbar-brand {
+        color: $text-color;
+    }
+    .nav-link {
+        color: $text-color;
+        &:hover {
+            color: $accent-color;
+        }
+    }
+}
