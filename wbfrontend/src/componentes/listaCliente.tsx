@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";  // Importante para o botão de editar
 import '../styles/index.scss';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { listarClientes, Cliente } from "../services/clientServices";
@@ -27,6 +28,12 @@ const ListaCliente = () => {
                         <p><strong>Informações adicionais:</strong> {cliente.endereco?.informacoesAdicionais}</p>
 
                         <p><strong>Telefones:</strong> {cliente.telefones.map(tel => `(${tel.ddd}) ${tel.numero}`).join(", ")}</p>
+
+                        <div className="mt-2">
+                            <Link to={`/cadastro-clientes/${cliente.id}`} className="btn btn-sm btn-warning">
+                                Editar
+                            </Link>
+                        </div>
                     </li>
                 ))}
             </ul>

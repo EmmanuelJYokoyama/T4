@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Logger } from 'sass';
 
 const API_BASE_URL = "http://localhost:32832";
 
@@ -29,10 +30,38 @@ const FormClientes = () => {
     if (id) {
       const fetchClient = async () => {
         try {
-          const response = await fetch(`${API_BASE_URL}/cliente/${id}`);
-          if (!response.ok) throw new Error("Erro ao buscar cliente");
+          const response = await fetch(`${API_BASE_URL}/cliente/${id}`, {
+            method: 'GET',
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+
+
           const data = await response.json();
-          setClienteData(data);
+          console.log(data);
+
+          const clienteNormalizado = {
+            ...data,
+            sobrenome: data.sobreNome ?? '',
+            email: data.email ?? '',
+            idade: data.idade ?? 0,
+            cpf: data.cpf ?? '',
+            endereco: data.endereco ?? {
+              estado: '',
+              cidade: '',
+              bairro: '',
+              rua: '',
+              numero: '',
+              codigoPostal: '',
+              informacoesAdicionais: ''
+            },
+            telefones: (data.telefones && data.telefones.length > 0) 
+              ? data.telefones.map((t: any) => ({ ddd: t.ddd, numero: t.numero })) 
+              : [{ ddd: '', numero: '' }]
+          };
+
+          setClienteData(clienteNormalizado);
         } catch (error) {
           console.error(error);
         }
@@ -62,41 +91,28 @@ const FormClientes = () => {
     setClienteData({ ...clienteData, telefones: [...clienteData.telefones, { ddd: '', numero: '' }] });
   };
 
-  const handleClearForm = () => {
-    setClienteData({
-      nome: '',
-      sobrenome: '',
-      email: '',
-      idade: 0,
-      cpf: '',
-      endereco: {
-        estado: '',
-        cidade: '',
-        bairro: '',
-        rua: '',
-        numero: '',
-        codigoPostal: '',
-        informacoesAdicionais: ''
-      },
-      telefones: [{ ddd: '', numero: '' }]
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const method = id ? "PUT" : "POST";
       const endpoint = id ? "cliente/atualizar" : "cliente/cadastrar";
 
+      // Faz o mapeamento inverso para o backend (sobrenome -> sobreNome)
+      const payload = {
+        ...clienteData,
+        sobreNome: clienteData.sobrenome,
+      };
+      delete payload.sobrenome;
+
       const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(clienteData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) throw new Error("Erro ao enviar dados");
 
-      handleClearForm();
+      alert(id ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
       navigate('/clientes');
     } catch (error) {
       console.error(error);
@@ -112,13 +128,13 @@ const FormClientes = () => {
         <input type="text" name="nome" value={clienteData.nome} onChange={handleChange} required />
 
         <label>Sobrenome:</label>
-        <input type="text" name="sobrenome" value={clienteData.sobrenome} onChange={handleChange} required />
+        <input type="text" name="sobrenome" value={clienteData.sobreNome} onChange={handleChange} required />
 
         <label>Email:</label>
         <input type="email" name="email" value={clienteData.email} onChange={handleChange} />
 
         <label>Idade:</label>
-        <input type="number" name="idade" value={clienteData.idade} onChange={handleChange}  required />
+        <input type="number" name="idade" value={clienteData.idade} onChange={handleChange} required />
 
         <label>CPF:</label>
         <input type="text" name="cpf" value={clienteData.cpf} onChange={handleChange} required maxLength={11} />
@@ -137,14 +153,14 @@ const FormClientes = () => {
         <label>Estado:</label>
         <input type="text" name="estado" value={clienteData.endereco.estado} onChange={handleEnderecoChange} required />
 
-        <label>Número:</label>
+        <label>Número:</label> 
         <input type="text" name="numero" value={clienteData.endereco.numero} onChange={handleEnderecoChange} required />
 
         <label>Código Postal:</label>
         <input type="text" name="codigoPostal" value={clienteData.endereco.codigoPostal} onChange={handleEnderecoChange} required />
 
         <label>Complemento:</label>
-        <input type="text" name="complemento" value={clienteData.endereco.informacoesAdicionais} onChange={handleEnderecoChange} required />
+        <input type="text" name="informacoesAdicionais" value={clienteData.endereco.informacoesAdicionais} onChange={handleEnderecoChange} />
 
         {/* Telefones */}
         <h3>Telefones</h3>
@@ -159,8 +175,7 @@ const FormClientes = () => {
         ))}
         <button type="button" onClick={handleAddTelefone}>Adicionar Telefone</button>
 
-        {/* Botões de ação */}
-        <button type="submit">{id ? 'Atualizar' : 'Cadastrar'}</button>
+        <button type="submit">{id ? 'Salvar Alterações' : 'Cadastrar'}</button>
       </form>
     </div>
   );
