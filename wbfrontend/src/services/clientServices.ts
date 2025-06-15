@@ -66,3 +66,4 @@ export const excluirCliente = async (cliente: Cliente): Promise<void> => {
         body: JSON.stringify(cliente),
     });
 };
+
